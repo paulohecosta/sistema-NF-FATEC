@@ -1,6 +1,7 @@
 /*
 by PAULO COSTA
-15/05/2016
+criado em 15/05/2016
+editado em 16/05/2016
 */
 
 #include <stdio.h>
@@ -30,13 +31,14 @@ typedef struct
     float valor;
 } PRODUTO;
 
+//carrega os dados a partir dos arquivos dat armazenados
 void carregarDados(CLIENTE *cvetor, int *cpos, PRODUTO *pvetor, int *ppos, int *npos)
 {
     CLIENTE *cload = cvetor+(*cpos);
     FILE *clientes;
     PRODUTO *pload = pvetor+(*ppos);
     FILE *produtos;
-
+    //carrega clientes
     clientes = fopen("registros\\clientes.dat", "a+");
     if (clientes == NULL)
         printf("OCORREU UM PROBLEMA AO ABRIR O ARQUIVO!\n");
@@ -58,7 +60,7 @@ void carregarDados(CLIENTE *cvetor, int *cpos, PRODUTO *pvetor, int *ppos, int *
         }
     }
     fclose(clientes);
-
+    //carrega produtos
     produtos = fopen("registros\\produtos.dat", "a+");
     if (produtos == NULL)
         printf("OCORREU UM PROBLEMA AO ABRIR O ARQUIVO!\n");
@@ -81,7 +83,7 @@ void carregarDados(CLIENTE *cvetor, int *cpos, PRODUTO *pvetor, int *ppos, int *
         }
     }
     fclose(produtos);
-
+    //carrega o indice de notas, para o sistema reconhecer onde parou a contagem
     FILE *notas;
     for((*npos)=0; ; (*npos)++)
     {
@@ -95,7 +97,7 @@ void carregarDados(CLIENTE *cvetor, int *cpos, PRODUTO *pvetor, int *ppos, int *
         fclose(notas);
     }
 }
-
+//corrige cpf/cnpj sem ponto e traço, para com ponto e traço
 void corrigirCPF(CLIENTE *cvetor, int cpos)
 {
     CLIENTE *novo = cvetor+cpos;
@@ -142,7 +144,7 @@ void corrigirCPF(CLIENTE *cvetor, int cpos)
     }
     strcpy((*novo).id, corrigido);
 }
-
+//cadastro de cliente
 void cadastrarCliente(CLIENTE *cvetor, int *cpos)
 {
     CLIENTE *novo = cvetor+(*cpos);
@@ -181,7 +183,7 @@ void cadastrarCliente(CLIENTE *cvetor, int *cpos)
 
     *cpos = (*cpos) + 1;
 }
-
+//cadastro de produto
 void cadastrarItem(PRODUTO *pvetor, int *ppos)
 {
     PRODUTO *novo = pvetor+(*ppos);
@@ -213,7 +215,7 @@ void cadastrarItem(PRODUTO *pvetor, int *ppos)
 
     *ppos = (*ppos) + 1;
 }
-
+//busca cliente por nome, ou parte do nome(busca mais inteligente)
 void buscarPorNome(CLIENTE cvetor[], int cpos)
 {
     char nome[N_TAM];
@@ -241,7 +243,7 @@ void buscarPorNome(CLIENTE cvetor[], int cpos)
     }
     if(busc3==0) printf("NENHUM RESULTADO ENCONTRADO!\n");
 }
-
+//busca cliente por cpf ou cnpj, ou parte dele (busca inteligente)
 void buscarPorCPF(CLIENTE cvetor[], int cpos)
 {
     char id[ID_TAM];
@@ -268,7 +270,7 @@ void buscarPorCPF(CLIENTE cvetor[], int cpos)
     }
     if(busc3==0) printf("NENHUM RESULTADO ENCONTRADO!\n");
 }
-
+//tela de chamada para as opções de busca de cliente
 void buscarCliente(CLIENTE cvetor[], int cpos)
 {
     int tela = 1;
@@ -307,7 +309,7 @@ void buscarCliente(CLIENTE cvetor[], int cpos)
         }
     }
 }
-
+//busca simples de produto por código
 void buscarPorCodigo(PRODUTO pvetor[], int ppos)
 {
     int codigo;
@@ -325,7 +327,7 @@ void buscarPorCodigo(PRODUTO pvetor[], int ppos)
     }
     if(busc==0) printf("NENHUM RESULTADO ENCONTRADO!\n");
 }
-
+//busca inteligente por descrição ou parte da descrição
 void buscarPorDescricao(PRODUTO pvetor[], int ppos)
 {
     char desc[N_TAM];
@@ -350,7 +352,7 @@ void buscarPorDescricao(PRODUTO pvetor[], int ppos)
     }
     if(busc3==0) printf("NENHUM RESULTADO ENCONTRADO!\n");
 }
-
+//tela de chamada das opções de busca de produto
 void buscarItem(PRODUTO pvetor[], int ppos)
 {
     int tela = 1;
@@ -389,7 +391,7 @@ void buscarItem(PRODUTO pvetor[], int ppos)
         }
     }
 }
-
+//função completa de geração de nota
 void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos)
 {
     FILE *notas;
@@ -442,7 +444,7 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
         fprintf(notas,"\n\n+++++++++++++++++++++++++++++++++++++++\n\n");
     }
     fclose(notas);
-
+    //escolher produtos para a nota
     for(cont=0; cont<NF_QTDE; cont++)
     {
         printf("DIGITE O CÓDIGO DO PRODUTO, OU DIGITE -1 PARA FECHAR NOTA\nCASO NÃO LEMBRE O CÓDIGO DO PRODUTO, DIGITE -2 PESQUISAR POR DESCRIÇÃO:\n");
@@ -459,6 +461,7 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
             {
                 if(produto == -2)
                 {
+                    //opção de busca dentro da opção de gerar nota
                     buscarPorDescricao(pvetor, ppos);
                 }
                 printf("DIGITE O CÓDIGO DO PRODUTO\nCASO NÃO LEMBRE O CÓDIGO DO PRODUTO, DIGITE -2 PESQUISAR POR DESCRIÇÃO:\n");
@@ -466,9 +469,10 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
                 scanf("%d", &produto);
             }
             printf("VOCÊ ESCOLHEU %s", pvetor[produto].descricao);
+            //solicitação da quantidade ao usuário
             printf("DIGITE A QUANTIDADE:\n");
             scanf("%d", &qtde[cont]);
-
+            //geração dos valores na nota
             fprintf(notas,"CÓDIGO DO PRODUTO:%04d\n", pvetor[produto].codigo);
             fprintf(notas,"     DESCRIÇÃO:%s", pvetor[produto].descricao);
             fprintf(notas,"     VALOR UNITÁRIO:%.2f\n", pvetor[produto].valor);
@@ -477,11 +481,12 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
             total += ((pvetor[produto].valor)*(qtde[cont]));
         }
         fclose(notas);
-
+        //se atingiu limite da nota, fecha a nota
         if(cont==(NF_QTDE-1))
         {
             printf("LIMITE DE PRODUTOS POR NOTA ATINGIDO.\nFECHANDO NOTA...");
         }
+        //se não, exibe uma parcial e continua a solicitação de entrada de produtos
         else
         {
             system("cls");
@@ -506,6 +511,7 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
         }
 
     }
+    //inserir rodapé na nota com informações finais
     notas = fopen(arquivo, "a+");
     if (notas == NULL)
         printf("OCORREU UM PROBLEMA AO LER O ARQUIVO!");
@@ -522,7 +528,7 @@ void gerarNota(int *npos, CLIENTE cvetor[], int cpos, PRODUTO pvetor[], int ppos
     system("cls");
 
 }
-
+//exibir na tela uma nota salva no HD
 void imprimirNota()
 {
     FILE *notas;
@@ -555,7 +561,7 @@ void imprimirNota()
     system("pause");
     system("cls");
 }
-
+//função main
 int main()
 {
     setlocale(LC_ALL, "portuguese");
