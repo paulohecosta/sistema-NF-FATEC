@@ -1,7 +1,8 @@
 /*
-by PAULO COSTA
+by PAULO COSTA RA0040961523009
 criado em 15/05/2016
 editado em 16/05/2016
+editado em 29/05/2016
 */
 
 #include <stdio.h>
@@ -20,6 +21,7 @@ editado em 16/05/2016
 
 typedef struct
 {
+    //wchar_t não funcionu... fwrite não guardava os valores conforme digitados...
     char nome[N_TAM];
     char id[ID_TAM];
 } CLIENTE;
@@ -85,7 +87,7 @@ void carregarDados(CLIENTE *cvetor, int *cpos, PRODUTO *pvetor, int *ppos, int *
     fclose(produtos);
     //carrega o indice de notas, para o sistema reconhecer onde parou a contagem
     FILE *notas;
-    for((*npos)=0; ; (*npos)++)
+    for((*npos)=1; ; (*npos)++)
     {
         int indice = (*npos);
         char* extensao = ".dat";
@@ -258,13 +260,14 @@ void buscarPorCPF(CLIENTE cvetor[], int cpos)
         for(busc1=0; busc1<strlen(cvetor[cont].id); busc1++)
         {
             if(id[busc2] == cvetor[cont].id[busc1]) busc2++;
-            if(busc2 == strlen(id))
+            if(busc2 == strlen(id)-1)
             {
                 if(strlen(cvetor[cont].id)<=15)
                     printf("CLIENTE Nº:%04d  CPF:%s\nNOME:%s\n", cont, cvetor[cont].id, cvetor[cont].nome);
                 else
                     printf("CLIENTE Nº:%04d  CNPJ:%s\nRAZÃO SOCIAL:%s\n", cont, cvetor[cont].id, cvetor[cont].nome);
                 busc3 = 1;
+                break;
             }
         }
     }
@@ -277,6 +280,7 @@ void buscarCliente(CLIENTE cvetor[], int cpos)
     while(tela>0)
     {
         system("cls");
+        char ctela;
         printf("+++++++++++++++++++++++++++++++++++++\n");
         printf("+++        BUSCAR CLIENTE         +++\n");
         printf("+++++++++++++++++++++++++++++++++++++\n");
@@ -285,20 +289,22 @@ void buscarCliente(CLIENTE cvetor[], int cpos)
         printf("+++  [9]-SAIR                     +++\n");
         printf("+++++++++++++++++++++++++++++++++++++\n\n");
         printf("DIGITE O NÚMERO DA OPÇÃO DESEJADA:\n");
-        scanf("%d", &tela);
+        fflush(stdin);
+        scanf("%c", &ctela);
+        tela = (int)ctela;
         switch(tela)
         {
-        case 1:
+        case '1':
             buscarPorNome(cvetor, cpos);
             system("pause");
             break;
 
-        case 2:
+        case '2':
             buscarPorCPF(cvetor, cpos);
             system("pause");
             break;
 
-        case 9:
+        case '9':
             tela = 0;
             printf("VOLTANDO AO MENU PRINCIPAL...");
             Sleep(1000);
@@ -316,6 +322,7 @@ void buscarPorCodigo(PRODUTO pvetor[], int ppos)
     int cont;
     int busc = 0;
     printf("DIGITE O CÓDIGO DO PRODUTO:\n");
+    fflush(stdin);
     scanf("%d", &codigo);
     for(cont=0; cont<ppos; cont++)
     {
@@ -359,6 +366,7 @@ void buscarItem(PRODUTO pvetor[], int ppos)
     while(tela>0)
     {
         system("cls");
+        char ctela;
         printf("+++++++++++++++++++++++++++++++++++++\n");
         printf("+++         BUSCAR ITEM           +++\n");
         printf("+++++++++++++++++++++++++++++++++++++\n");
@@ -367,20 +375,22 @@ void buscarItem(PRODUTO pvetor[], int ppos)
         printf("+++  [9]-SAIR                     +++\n");
         printf("+++++++++++++++++++++++++++++++++++++\n\n");
         printf("DIGITE O NÚMERO DA OPÇÃO DESEJADA:\n");
-        scanf("%d", &tela);
+        fflush(stdin);
+        scanf("%c", &ctela);
+        tela = (int)ctela;
         switch(tela)
         {
-        case 1:
+        case '1':
             buscarPorCodigo(pvetor, ppos);
             system("pause");
             break;
 
-        case 2:
+        case '2':
             buscarPorDescricao(pvetor, ppos);
             system("pause");
             break;
 
-        case 9:
+        case '9':
             tela = 0;
             printf("VOLTANDO AO MENU PRINCIPAL...");
             Sleep(1000);
@@ -578,6 +588,7 @@ int main()
     carregarDados(cliente, &ic, produto, &ip, &in);
 
     int tela = 1;
+    char ctela;
     while(tela>0)
     {
         printf("+++++++++++++++++++++++++++++++++++++\n");
@@ -594,18 +605,20 @@ int main()
         printf("+++        BY PAULO COSTA         +++\n");
         printf("+++++++++++++++++++++++++++++++++++++\n\n");
         printf("DIGITE O NÚMERO DA OPÇÃO DESEJADA:\n");
-        scanf("%d", &tela);
+        fflush(stdin);
+        scanf("%c", &ctela);
+        tela = (int)ctela;
         switch(tela)
         {
-        case 1:
+        case '1':
             cadastrarCliente(cliente, &ic);
             break;
 
-        case 2:
+        case '2':
             cadastrarItem(produto, &ip);
             break;
 
-        case 3:
+        case '3':
             if(ic==0)
             {
                 printf("NÃO EXISTEM CLIENTES CADASTRADOS.\n");
@@ -614,7 +627,7 @@ int main()
             else buscarCliente(cliente, ic);
             break;
 
-        case 4:
+        case '4':
             if(ip==0)
             {
                 printf("NÃO EXISTEM PRODUTOS CADASTRADOS.\n");
@@ -623,7 +636,7 @@ int main()
             else buscarItem(produto, ip);
             break;
 
-        case 5:
+        case '5':
             if(ic==0)
             {
                 printf("NÃO EXISTEM CLIENTES CADASTRADOS.\n");
@@ -637,7 +650,7 @@ int main()
             else gerarNota(&in, cliente, ic, produto, ip);
             break;
 
-        case 6:
+        case '6':
             if(in==0)
             {
                 printf("NÃO EXISTEM NOTAS LANÇADAS.\n");
@@ -646,7 +659,7 @@ int main()
             else imprimirNota();
             break;
 
-        case 9:
+        case '9':
             tela = 0;
             printf("ENCERRANDO SISTEMA...");
             Sleep(2000);
