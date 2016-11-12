@@ -1,7 +1,7 @@
 # sistema-NF-FATEC
 Academic work for FATEC - Programming II.
 Author: Paulo Costa
-Time of development: 10 hours
+Time of development: 8 hours
 Language: C
 
 Description:
